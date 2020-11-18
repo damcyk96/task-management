@@ -64,4 +64,9 @@ export class TaskService {
 
         return taskDTO;
     }
+
+    public async deleteOne(taskId: number) {
+        const task: Task = await this.getOne(taskId);
+        await this.taskRepository.remove(task);
+    }
 }
