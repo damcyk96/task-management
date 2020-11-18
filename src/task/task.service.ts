@@ -50,6 +50,18 @@ export class TaskService {
         const tasksDTO: TaskDTO[] = tasks.map(x => this.entityToDTO(x));
 
         return tasksDTO;
+    }
 
+    public async updateOne(taskId: number, updateTaskRequest: any) {
+        const task: Task = await this.getOne(taskId);
+        if(updateTaskRequest.title) task.title = updateTaskRequest.title;
+        if(updateTaskRequest.description) task.description = updateTaskRequest.description;
+        if(updateTaskRequest.status) task.status = updateTaskRequest.status;
+
+        await this.taskRepository.save(task);
+
+        const taskDTO: TaskDTO = this.entityToDTO(task);
+
+        return taskDTO;
     }
 }

@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { CreateTaskDTO } from 'src/dto/create-task.dto';
+import { UpdateTaskDTO } from 'src/dto/update-task.dto';
 import { TaskService } from './task.service';
 
 @Controller('tasks')
@@ -26,6 +27,12 @@ export class TaskController {
         const resp = await this.taskService.createOne(createTaskRequest);
 
         return resp;
+    }
 
+    @Put("/:id")
+    public async updateOne(@Param("id") taskId: number, @Body() updateTaskRequest: UpdateTaskDTO) {
+        const resp = await this.taskService.updateOne(taskId, updateTaskRequest);
+
+        return resp;
     }
 }
