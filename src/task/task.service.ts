@@ -13,7 +13,7 @@ export class TaskService {
         const task: Task = await this.taskRepository.findOne(taskId);
 
         if(!task) {
-            throw new NotFoundException(`Task with it ${taskId} wasa not found`);
+            throw new NotFoundException(`Task with id ${taskId} was not found`);
         }
 
         const taskDTO: TaskDTO = this.entityToDTO(task);
