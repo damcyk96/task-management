@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { TaskAPI } from './api/task.api';
 import { TaskDTO } from './api/dto/task.dto';
-import { Grid } from '@material-ui/core';
+import { AppBar, Button, Grid, Toolbar, Typography } from '@material-ui/core';
 import Task from './components/Task';
 
 function App() {
@@ -18,6 +18,15 @@ function App() {
 
   return (
     <div className="App">
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" style={{flexGrow: 1}}>
+            Poor trello
+          </Typography>
+          <Button variant="contained" color="primary">Add new task</Button>
+        </Toolbar>
+      </AppBar>
+
       <Grid container spacing={1} style={{padding: 10}}>
         {tasks.map(task => {
          return(
