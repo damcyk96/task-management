@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Task, TaskStatus } from '../entity/task.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateTaskDTO } from 'src/dto/create-task.dto';
-import { TaskDTO } from 'src/dto/task.dto';
-import { Task, TaskStatus } from 'src/entity/task.entity';
+import { CreateTaskDTO } from '../dto/create-task.dto';
+import { TaskDTO } from '../dto/task.dto';
+import { UpdateTaskDTO } from '../dto/update-task.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -12,9 +13,7 @@ export class TaskService {
     public async getOne(taskId: number) {
         const task: Task = await this.taskRepository.findOne(taskId);
 
-        if(!task) {
-            throw new NotFoundException(`Task with id ${taskId} was not found`);
-        }
+        if(!task) throw new NotFoundException(`Task with the id ${taskId} was not found`);
 
         const taskDTO: TaskDTO = this.entityToDTO(task);
 
@@ -38,7 +37,7 @@ export class TaskService {
         const taskDTO = new TaskDTO();
         taskDTO.id = task.id;
         taskDTO.title = task.title;
-        task.description = task.description;
+        taskDTO.description = task.description;
         taskDTO.status = task.status;
 
         return taskDTO;
@@ -46,27 +45,28 @@ export class TaskService {
 
     public async getAll() {
         const tasks: Task[] = await this.taskRepository.find();
-
         const tasksDTO: TaskDTO[] = tasks.map(x => this.entityToDTO(x));
 
         return tasksDTO;
     }
 
-    public async updateOne(taskId: number, updateTaskRequest: any) {
+    public async updateOne(taskId: number, updateTaskRequest: UpdateTaskDTO) {
         const task: Task = await this.getOne(taskId);
-        if(updateTaskRequest.title) task.title = updateTaskRequest.title;
-        if(updateTaskRequest.description) task.description = updateTaskRequest.description;
-        if(updateTaskRequest.status) task.status = updateTaskRequest.status;
+
+        task.title = updateTaskRequest.title || task.title;
+        task.description = updateTaskRequest.description || task.description;
+        task.status = updateTaskRequest.status === undefined ? task.status : updateTaskRequest.status;
 
         await this.taskRepository.save(task);
 
-        const taskDTO: TaskDTO = this.entityToDTO(task);
+       const taskDTO: TaskDTO = this.entityToDTO(task);
 
-        return taskDTO;
+       return taskDTO;
     }
 
     public async deleteOne(taskId: number) {
         const task: Task = await this.getOne(taskId);
         await this.taskRepository.remove(task);
     }
+   
 }

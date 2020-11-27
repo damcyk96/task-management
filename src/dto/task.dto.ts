@@ -1,4 +1,4 @@
-import { TaskStatus } from "src/entity/task.entity";
+import { TaskStatus } from "../entity/task.entity";
 
 export class TaskDTO {
     id: number;

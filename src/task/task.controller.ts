@@ -1,12 +1,13 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put } from '@nestjs/common';
-import { CreateTaskDTO } from 'src/dto/create-task.dto';
-import { UpdateTaskDTO } from 'src/dto/update-task.dto';
+import { Controller, Body, Post, Get, Param, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { CreateTaskDTO } from '../dto/create-task.dto';
+import { TaskStatus } from '../entity/task.entity';
 import { TaskService } from './task.service';
+import { UpdateTaskDTO } from '../dto/update-task.dto';
 
 @Controller('tasks')
 export class TaskController {
 
-    constructor(private readonly taskService: TaskService) {}
+    constructor(private readonly taskService: TaskService) { }
 
     @Get()
     public async getAll() {
@@ -39,6 +40,6 @@ export class TaskController {
     @Delete("/:id")
     @HttpCode(HttpStatus.NO_CONTENT)
     public async deleteOne(@Param("id") taskId: number) {
-        const resp = await this.taskService.deleteOne(taskId);
+        await this.taskService.deleteOne(taskId);
     }
 }

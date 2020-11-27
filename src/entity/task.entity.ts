@@ -11,7 +11,7 @@ export class Task {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ nullable: true, length: 64 })
+    @Column({ nullable: false, length: 64 })
     title: string;
 
     @Column({ nullable: true, length: 1024 })
@@ -19,4 +19,4 @@ export class Task {
 
     @Column({nullable: false, default: TaskStatus.Created})
     status: TaskStatus;
-} 
+}
