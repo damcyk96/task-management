@@ -4,9 +4,12 @@ import { TaskAPI } from './api/task.api';
 import { TaskDTO } from './api/dto/task.dto';
 import { AppBar, Button, Grid, Toolbar, Typography } from '@material-ui/core';
 import Task from './components/Task';
+import CreateTaskModal from './components/CreateTaskModal';
 
 function App() {
-  const [tasks, setTasks] = useState<TaskDTO[]>([])
+  const [tasks, setTasks] = useState<TaskDTO[]>([]);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
 
   useEffect(() => {
      async function fetchAll() {
@@ -18,8 +21,7 @@ function App() {
 
   return (
     <div className="App">
-      <AppBar position="static">
-        <Toolbar>
+      <CreateTaskModal open={createTaskModalOpen} handleClose={() => setCreateModalOpen(false)} />
           <Typography variant="h6" style={{flexGrow: 1}}>
             Poor trello
           </Typography>
