@@ -1,12 +1,20 @@
-import React, { useState } from "react";
-import { Modal, makeStyles, TextField, Button } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  makeStyles,
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+} from "@material-ui/core";
 import { TaskAPI } from "../api/task.api";
-import { TaskDTO } from "../api/dto/task.dto";
+import { TaskDTO, TaskStatus } from "../api/dto/task.dto";
 
 interface Props {
   open: boolean;
   handleClose: () => void;
-  onTaskCreated: (task: TaskDTO) => void;
+  onTaskUpdate: (task: TaskDTO) => void;
+  data: TaskDTO | undefined;
 }
 
 function getModalStyle() {
@@ -20,7 +28,7 @@ function getModalStyle() {
   };
 }
 
-const CreateTaskModal = (props: Props) => {
+const EditTaskModal = (props: Props) => {
   const useStyles = makeStyles((theme) => ({
     paper: {
       position: "absolute",
@@ -44,21 +52,33 @@ const CreateTaskModal = (props: Props) => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<undefined | string>(undefined);
+  const [status, setStatus] = useState(TaskStatus.Created);
 
-  const createTask = async () => {
-    const resp = await TaskAPI.createOne({
-      title,
-      description,
-    });
+  useEffect(() => {
+    if (props.data) {
+      setTitle(props.data.title);
+      setDescription(props.data.description);
+      setStatus(props.data.status);
+    }
+  }, [props.data]);
 
-    props.onTaskCreated(resp);
+  const updateTask = async () => {
+    if (props.data) {
+      const resp = await TaskAPI.updateOne(props.data.id, {
+        title,
+        description,
+        status,
+      });
 
-    console.log("New Task", resp);
+      props.onTaskUpdate(resp);
+
+      console.log("New Task", resp);
+    }
   };
 
   const body = (
     <div style={modalStyle} className={classes.paper}>
-      <h2 id="simple-modal-title">Create New Task</h2>
+      <h2 id="simple-modal-title">Update Task</h2>
       <p id="simple-modal-description">
         Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
       </p>
@@ -67,20 +87,33 @@ const CreateTaskModal = (props: Props) => {
         variant="filled"
         className={classes.textField}
         onChange={(e) => setTitle(e.target.value)}
+        value={title}
       />
       <TextField
         placeholder="Description"
         variant="filled"
         className={classes.textField}
         onChange={(e) => setDescription(e.target.value)}
+        value={description}
       />
+
+      <Select
+        value={status}
+        onChange={(e) => setStatus(e.target.value as TaskStatus)}
+        className={classes.textField}
+      >
+        <MenuItem value={TaskStatus.Created}>Created</MenuItem>
+        <MenuItem value={TaskStatus.InProgress}>In Progress</MenuItem>
+        <MenuItem value={TaskStatus.Done}>Done</MenuItem>
+      </Select>
+
       <Button
         color="primary"
         variant="contained"
         className={classes.createBtn}
-        onClick={createTask}
+        onClick={updateTask}
       >
-        Create New Task
+        Update Task
       </Button>
     </div>
   );
@@ -99,4 +132,4 @@ const CreateTaskModal = (props: Props) => {
   );
 };
 
-export default CreateTaskModal;
+export default EditTaskModal;
